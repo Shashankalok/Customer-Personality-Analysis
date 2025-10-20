@@ -105,6 +105,134 @@ Sweets and Fruits need some effective marketing. Company needs to run promotions
 **How the marketing can be made effective?**<br>
 As a marketing recommendation give coupons to the old and high spending customers. Market the cheap and on-offer products to the low income and low spending customers. Web   purchasing has some potential. To unlock this give special discounts to the customers who sign up on company's website.<br>
 
+
+1. What are missing values and how do you handle them?
+
+Missing values occur when no data is recorded for a particular observation or feature.
+In the Customer Personality Analysis dataset, some records had missing Income or Education values.
+
+Handling methods:
+
+Used .isnull().sum() to identify missing data.
+
+If missing values were few, rows were dropped using .dropna().
+
+If missing data was significant, we filled it using statistical methods like:
+
+Mean/Median imputation for numerical columns (df['Income'].fillna(df['Income'].median(), inplace=True))
+
+Mode imputation for categorical columns (df['Education'].fillna(df['Education'].mode()[0], inplace=True))
+
+This ensures the dataset remains consistent without losing too much information.
+
+2. How do you treat duplicate records?
+
+Duplicate records can distort analysis results.
+We checked duplicates using:
+
+df.duplicated().sum()
+
+
+Then removed them using:
+
+df.drop_duplicates(inplace=True)
+
+
+In this project, duplicate customer entries (based on ID or same demographic + purchase patterns) were removed to ensure each record represents a unique customer.
+
+3. Difference between dropna() and fillna() in Pandas?
+Function	Purpose	Example
+dropna()	Removes rows or columns with missing values	df.dropna(inplace=True)
+fillna()	Replaces missing values with specified values	df['Income'].fillna(df['Income'].median(), inplace=True)
+
+Use dropna() when missing values are few or not important.
+
+Use fillna() when you want to keep the data but replace nulls with suitable estimates.
+
+4. What is outlier treatment and why is it important?
+
+Outliers are extreme values that differ significantly from the rest of the data.
+They can bias mean, standard deviation, and clustering results.
+
+Treatment steps:
+
+Detected using boxplots or z-scores:
+
+from scipy import stats
+df = df[(np.abs(stats.zscore(df['Income'])) < 3)]
+
+
+Replaced or capped extreme values at percentile limits (e.g., 1st and 99th).
+
+In this dataset, some customers had abnormally high spending or income values, which were treated to improve clustering accuracy (e.g., K-Means).
+
+5. Explain the process of standardizing data.
+
+Standardization scales data so that each feature contributes equally to analysis or machine learning models.
+
+Steps:
+
+Identify numeric variables (e.g., Income, MntWines, MntMeatProducts).
+
+Apply StandardScaler() or MinMaxScaler():
+
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+df_scaled = scaler.fit_transform(df[numeric_columns])
+
+
+This ensures features have mean = 0 and standard deviation = 1.
+
+In clustering (like K-Means), this prevents large-valued variables (like income) from dominating others.
+
+6. How do you handle inconsistent data formats (e.g., date/time)?
+
+Inconsistent formats can break analysis.
+For example, Dt_Customer was stored as a string; we converted it into a proper datetime object:
+
+df['Dt_Customer'] = pd.to_datetime(df['Dt_Customer'], format='%Y-%m-%d')
+
+
+We also standardized categorical text (e.g., married, Married, MARRIED → all converted to lowercase “married”).
+
+This ensures uniformity in data interpretation and calculation of variables like customer tenure or recency.
+
+7. What are common data cleaning challenges?
+
+Missing or incomplete data (e.g., missing income or education values)
+
+Inconsistent formats (date, text case, numeric types)
+
+Duplicate entries (same customer repeated)
+
+Outliers and extreme values
+
+Incorrect data types (e.g., numbers stored as strings)
+
+Human entry errors or encoding issues
+
+These challenges require careful inspection and decisions to maintain data integrity.
+
+8. How can you check data quality?
+
+We can evaluate data quality by performing these checks:
+
+Completeness: Count missing values using .isnull().sum()
+
+Uniqueness: Check duplicates using .duplicated().sum()
+
+Validity: Verify data types (df.dtypes) and value ranges
+
+Consistency: Ensure uniform formats for date/time, categories, etc.
+
+Accuracy: Cross-check sample records for logical correctness (e.g., negative spending values)
+
+Descriptive stats: Use .describe() to check unusual values or distributions
+
+Maintaining data quality ensures reliable analysis, accurate clustering, and meaningful insights.
+
+
+
 ## [Click Here  for Visualize and Analyze](https://arienugroho050396.github.io/project7.html) :thumbsup: :thumbsup: :thumbsup:
 <p align="center">
   <img width="460" height="300" src="https://www.icegif.com/wp-content/uploads/icegif-1436.gif">
